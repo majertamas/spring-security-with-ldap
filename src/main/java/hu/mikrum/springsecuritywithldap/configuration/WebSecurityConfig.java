@@ -46,9 +46,8 @@ public class WebSecurityConfig {
 
     @Bean
     public RememberMeServices rememberMeServices(String internalSecretKey, LdapUserDetailsService userDetailsService) {
-        BasicRememberMeUserDetailsService rememberMeUserDetailsService = new BasicRememberMeUserDetailsService();
         InMemoryTokenRepositoryImpl rememberMeTokenRepository = new InMemoryTokenRepositoryImpl();
-        PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices(internalSecretKey, rememberMeUserDetailsService, rememberMeTokenRepository);
+        PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices(internalSecretKey, userDetailsService, rememberMeTokenRepository);
         services.setAlwaysRemember(true);
         return services;
     }
