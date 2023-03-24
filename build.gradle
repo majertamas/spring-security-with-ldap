@@ -18,12 +18,70 @@ repositories {
     mavenCentral()
 }
 
+def uiDir = "$projectDir/src/main/ui"
+
+task buildAngular(type:Exec) {
+    group = BasePlugin.BUILD_GROUP
+    dependsOn "cleanAngular"
+    onlyIf { !project.hasProperty('ngSkip') }
+
+    workingDir "$uiDir"
+    inputs.dir "$uiDir"
+
+    if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+        commandLine "ng.cmd", "build", "--output-path=../../../dist", "--base-href=/ui"  //, "--deploy-url=/${rootProject.name}/ngjs/" , "--base-href=/${rootProject.name}/ui"
+    } else {
+        commandLine "ng", "build", "--output-path=../../../dist", "--base-href=/ui" //, "--deploy-url=/${rootProject.name}/ngjs/" , "--base-href=/${rootProject.name}/ui"
+    }
+}
+
+
+
+task installAngular(type:Exec) {
+    group = BasePlugin.BUILD_GROUP
+    onlyIf { !project.hasProperty('ngSkip') }
+
+    workingDir "$uiDir"
+    inputs.dir "$uiDir"
+
+    if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+        commandLine "npm.cmd", "install"
+    } else {
+        commandLine "npm", "install"
+    }
+}
+
+task cleanAngular(type: Delete) {
+    dependsOn "installAngular"
+    delete files("${rootDir}/src/main/resources/ui/*")
+}
+
+
+processResources {
+    dependsOn "buildAngular"
+    doFirst {
+        copy {
+            from "${rootDir}/dist"
+            into "${rootDir}/src/main/resources/ui"
+        }
+    }
+}
+
+bootJar {
+    dependsOn test
+    mainClass = 'hu.mikrum.demo.SpringSecurityWithLdapApplication.java'
+    archiveName = "${project.name}"+'.jar'
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.ldap:spring-ldap-core")
+    implementation("org.springframework.security:spring-security-ldap")
+    implementation("com.unboundid:unboundid-ldapsdk")
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
