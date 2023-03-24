@@ -1,0 +1,2 @@
+https://spring.io/guides/gs/authenticating-ldap/
+https://medium.com/@renquanbo7453/spring-security-with-ldap-based-user-store-6ac947c48f7c
