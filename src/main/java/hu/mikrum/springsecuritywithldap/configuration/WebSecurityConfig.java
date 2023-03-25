@@ -29,17 +29,19 @@ public class WebSecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/favicon**").permitAll()
-                .anyRequest().authenticated()
+                    .antMatchers("/favicon**").permitAll()
+                    .antMatchers("/ui/home").permitAll()
+                    .anyRequest().authenticated()
                 .and()
                 .formLogin()
                     .loginPage("/login.html").permitAll()
+                    .defaultSuccessUrl("/rest/current-user", true)
                     .loginProcessingUrl("/login")
                     .failureForwardUrl("/login?error")
                 .and()
                 .rememberMe()
-                .rememberMeServices(rememberMeServices(internalSecretKey, userDetailsService))
-                .key(internalSecretKey);
+                    .rememberMeServices(rememberMeServices(internalSecretKey, userDetailsService))
+                    .key(internalSecretKey);
 
         return http.build();
     }
