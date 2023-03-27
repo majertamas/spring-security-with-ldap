@@ -25,14 +25,10 @@ export class LoginComponent {
     formData.append('username', this.form.get('username').value);
     formData.append('password', this.form.get('password').value);
     this.http
-      .post('http://localhost:8080/login', formData)
+      .post('http://localhost:8080/login', formData, {responseType: 'text'})
       .subscribe({
-        next: (response) => console.log(response),
-        error: (error) => {
-          if (error.status === 200) {
-            this.router.navigate(['/home'])
-          }
-        },
+        next: () => this.router.navigate(['/home']),
+        error: (error) => console.log(error)
       });
   }
 }
