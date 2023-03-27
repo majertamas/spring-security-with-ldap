@@ -24,21 +24,14 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    // todo egy mappába menjenek a js-ek, és arra menjen a permit all
+    private final String[] toPermit = new String[]{"/scripts**", "/main**", "/polyfills**", "/styles**", "/primeicons**", "/vendor**", "/favicon**", "/runtime**"};
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, String internalSecretKey, LdapUserDetailsService userDetailsService) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/scripts**").permitAll()
-                .antMatchers("/main**").permitAll()
-                .antMatchers("/polyfills**").permitAll()
-                .antMatchers("/styles**").permitAll()
-                .antMatchers("/primeicons**").permitAll()
-                .antMatchers("/vendor**").permitAll()
-                .antMatchers("/favicon**").permitAll()
-                .antMatchers("/runtime**").permitAll()
+                .antMatchers(toPermit).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
