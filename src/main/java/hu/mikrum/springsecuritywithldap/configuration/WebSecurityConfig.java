@@ -24,24 +24,32 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    // todo egy mappába menjenek a js-ek, és arra menjen a permit all
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, String internalSecretKey, LdapUserDetailsService userDetailsService) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/favicon**").permitAll()
-                    .antMatchers("/ui/home").permitAll()
-                    .anyRequest().authenticated()
+                .antMatchers("/scripts**").permitAll()
+                .antMatchers("/main**").permitAll()
+                .antMatchers("/polyfills**").permitAll()
+                .antMatchers("/styles**").permitAll()
+                .antMatchers("/primeicons**").permitAll()
+                .antMatchers("/vendor**").permitAll()
+                .antMatchers("/favicon**").permitAll()
+                .antMatchers("/runtime**").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                    .loginPage("/login.html").permitAll()
-                    .defaultSuccessUrl("/ui/home", true)
-                    .loginProcessingUrl("/login")
-                    .failureForwardUrl("/login?error")
+                .loginPage("/ui/login").permitAll()
+                .defaultSuccessUrl("/ui/home", true)
+                .loginProcessingUrl("/login")
+                .failureForwardUrl("/login?error")
                 .and()
                 .rememberMe()
-                    .rememberMeServices(rememberMeServices(internalSecretKey, userDetailsService))
-                    .key(internalSecretKey);
+                .rememberMeServices(rememberMeServices(internalSecretKey, userDetailsService))
+                .key(internalSecretKey);
 
         return http.build();
     }
