@@ -30,7 +30,6 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/favicon**").permitAll()
-                    .antMatchers("/ui/home").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .formLogin()
